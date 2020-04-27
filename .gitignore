@@ -1,0 +1,9 @@
+/inst_file_list_32bit.txt
+/inst_file_list_64bit.txt
+/uninst_file_list_32bit.txt
+/uninst_file_list_64bit.txt
+/*.xz
+/package_content
+/files
+/build
+/.idea
