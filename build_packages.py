@@ -156,7 +156,7 @@ for arch in [ARCH32Bit, ARCH64Bit]:
     # Create ZIP-Packages
     zip_file_name = os.path.join(BUILD_DIR_NAME, '{0}-{1}.zip'.format(PACKAGE_BASE_NAME, arch))
     print('Create zip package {0}'.format(zip_file_name))
-    with zf.ZipFile(zip_file_name, 'w') as fh:
+    with zf.ZipFile(zip_file_name, 'w', compression=zf.ZIP_DEFLATED, compresslevel=9) as fh:
         with working_dir(file_dir_name):
             for subdir, _, filenames in os.walk('.'):
                 for filename in filenames:
