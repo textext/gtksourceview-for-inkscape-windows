@@ -8,7 +8,7 @@
 # 32bit:
 # http://repo.msys2.org/mingw/i686/mingw-w64-i686-gtksourceview3-3.24.11-1-any.pkg.tar.xz
 # 64bit:
-# http://repo.msys2.org/mingw/i686/mingw-w64-x86_64-gtksourceview3-3.24.11-1-any.pkg.tar.xz
+# http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gtksourceview3-3.24.11-1-any.pkg.tar.xz
 
 import urllib.request as ur
 import urllib.error as ue
@@ -19,7 +19,13 @@ from contextlib import contextmanager
 import os
 import sys
 
+# The msys mingw package we want to extract the files from
 GTKSOURCEVIEW_PACKAGENAME = "gtksourceview3-3.24.11-1"
+
+# Set this to False for debugging purposes if you have already downlaoded the gtksourceview-package
+DoDownload = False
+
+# Further variables which usually need not to be changed
 PACKAGE_BASE_NAME = "GTKSourceView-Inkscape-1.0"
 HTTP_ADDRESS = "http://repo.msys2.org/mingw"
 MINGW_BASE_NAME = "mingw-w64"
@@ -42,9 +48,6 @@ REQUIRED_FILES = ['bin/libgtksourceview-3.0-1.dll',
                   'share/gtksourceview-3.0/language-specs/R.lang',
                   'share/gtksourceview-3.0/styles/classic.xml',
                   'share/gtksourceview-3.0/styles/styles.rng']
-
-# Set this to False for debugging purposes if you have already downlaoded the gtksourceview-package
-DoDownload = False
 
 @contextmanager
 def working_dir(dirname):
