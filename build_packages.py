@@ -26,7 +26,7 @@ GTKSOURCEVIEW_PACKAGENAME = "gtksourceview3-3.24.11-1"
 DoDownload = False
 
 # Further variables which usually need not to be changed
-PACKAGE_BASE_NAME = "GTKSourceView-Inkscape-1.0"
+PACKAGE_BASE_NAME = "GtkSourceView-{0}-Inkscape-1.0".format(GTKSOURCEVIEW_PACKAGENAME.split("-",1)[-1].rsplit(".", 1)[0])
 HTTP_ADDRESS = "http://repo.msys2.org/mingw"
 MINGW_BASE_NAME = "mingw-w64"
 MINGW_SUFFIX = "any.pkg.tar.xz"

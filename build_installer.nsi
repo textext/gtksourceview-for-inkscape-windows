@@ -12,7 +12,7 @@ Unicode True
 !define PRODUCT_VERSION "1.0"
 !define PRODUCT_REGKEY "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "TexText"
-!define ARCHITECTURE "64"
+!define ARCHITECTURE "32"
 
 ; Names of the installer executable
 !define INSTALLER_NAME "Install-GtkSourceView-3.24-Inkscape-${PRODUCT_VERSION}-${ARCHITECTURE}bit.exe" 
