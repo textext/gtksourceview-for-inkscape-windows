@@ -145,7 +145,7 @@ for arch in [ARCH32Bit, ARCH64Bit]:
                 subdir = subdir[2:]  # Remove ./
                 if len(filenames) > 0:
                     for fn in filenames:
-                        fh.write("   Delete \"${FILES_SOURCE_PATH}\\" + subdir + "\\" + fn + "\"\n")
+                        fh.write("   Delete \"$INSTDIR\\" + subdir + "\\" + fn + "\"\n")
                 fh.write("   RMDir \"$INSTDIR\\" + subdir + "\"\n")
                 fh.write("\n")
     print('   Success!')
