@@ -1,6 +1,6 @@
-# GtkSourceView for Inkscape 1.0 on Windows
+# GtkSourceView for Inkscape 1.x on Windows
 
-A package providing GtkSourceView libraries for Inkscape 1.0 and later on Windows.
+A package providing GtkSourceView libraries for Inkscape 1.x on Windows.
 GtkSourceView enables Inkscape extensions using the GTK3 python bindings to use
 syntax highlighting. Currently only LaTeX is supported in this version for Inkscape
 but it can easily be extended to other languages upon request.
