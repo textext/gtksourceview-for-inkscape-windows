@@ -9,7 +9,7 @@ Unicode True
 
 ; Product name and version information
 !define PRODUCT_NAME "GtkSourceView 3.24.11 for Inkscape"
-!define PRODUCT_VERSION "1.0"
+!define PRODUCT_VERSION "1.x"
 !define PRODUCT_REGKEY "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 !define PRODUCT_PUBLISHER "TexText"
 !define ARCHITECTURE "32"

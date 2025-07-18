@@ -6,33 +6,35 @@
 #
 # Download addresses for the gtksourceviewpackages:
 # 32bit:
-# http://repo.msys2.org/mingw/i686/mingw-w64-i686-gtksourceview3-3.24.11-1-any.pkg.tar.xz
+# https://repo.msys2.org/mingw/mingw32/mingw-w64-i686-gtksourceview3-3.24.11-4-any.pkg.tar.zst
 # 64bit:
-# http://repo.msys2.org/mingw/x86_64/mingw-w64-x86_64-gtksourceview3-3.24.11-1-any.pkg.tar.xz
+# https://repo.msys2.org/mingw/mingw64/mingw-w64-x86_64-gtksourceview3-3.24.11-4-any.pkg.tar.zst
 
 import urllib.request as ur
 import urllib.error as ue
 import shutil as sh
 import tarfile as tf
 import zipfile as zf
+import zstandard as zstd
 from contextlib import contextmanager
 import os
 import sys
 
 # The msys mingw package we want to extract the files from
-GTKSOURCEVIEW_PACKAGENAME = "gtksourceview3-3.24.11-1"
+GTKSOURCEVIEW_PACKAGENAME = "gtksourceview3-3.24.11-4"
 
-# Set this to False for debugging purposes if you have already downlaoded the gtksourceview-package
-DoDownload = False
+# Set this to True to download the source files even if they already exist
+ForceDownload = False
 
 # Further variables which usually need not to be changed
-PACKAGE_BASE_NAME = "GtkSourceView-{0}-Inkscape-1.0".format(GTKSOURCEVIEW_PACKAGENAME.split("-",1)[-1].rsplit(".", 1)[0])
+PACKAGE_BASE_NAME = "GtkSourceView-{0}-Inkscape-1.4".format(GTKSOURCEVIEW_PACKAGENAME.split("-",1)[-1].rsplit(".", 1)[0])
 HTTP_ADDRESS = "http://repo.msys2.org/mingw"
 MINGW_BASE_NAME = "mingw-w64"
-MINGW_SUFFIX = "any.pkg.tar.xz"
+MINGW_SUFFIX = "any.pkg.tar.zst"
 ARCH32Bit = "32bit"
 ARCH64Bit = "64bit"
-ARCHSUFFIXES = {ARCH32Bit: "i686", ARCH64Bit: "x86_64"}
+ARCH_SUFFIXES = {ARCH32Bit: "i686", ARCH64Bit: "x86_64"}
+ARCH_URL_SUFFIXES = {ARCH32Bit: "mingw32", ARCH64Bit: "mingw64"}
 PACKAGE_BASE_DIR_NAME = 'package_content'
 FILE_BASE_DIR_NAME = 'files'
 BUILD_DIR_NAME = 'build'
@@ -71,7 +73,7 @@ def create_fresh_directory(dirname):
             print('      Failed to delete directory {0}!'.format(dirname))
             print('      Detailed error message')
             print('      {0}'.format(excpt))
-            sys.exit()
+            exit(1)
 
     # Create the directory
     try:
@@ -81,19 +83,19 @@ def create_fresh_directory(dirname):
         print('   Failed to create directory {0}!'.format(dirname))
         print('   Detailed error message')
         print('   {0}'.format(excpt))
-        sys.exit()
+        exit(1)
 
 
 create_fresh_directory(BUILD_DIR_NAME)
 for arch in [ARCH32Bit, ARCH64Bit]:
     print('==========================================')
-    print('Building for architecture {0}'.format(ARCHSUFFIXES[arch]))
+    print('Building for architecture {0}'.format(ARCH_SUFFIXES[arch]))
     print('==========================================')
-    package_name = '{0}-{1}-{2}-{3}'.format(MINGW_BASE_NAME, ARCHSUFFIXES[arch], GTKSOURCEVIEW_PACKAGENAME, MINGW_SUFFIX)
+    package_name = '{0}-{1}-{2}-{3}'.format(MINGW_BASE_NAME, ARCH_SUFFIXES[arch], GTKSOURCEVIEW_PACKAGENAME, MINGW_SUFFIX)
 
     # Download mingw package
-    if DoDownload:
-        url = '{0}/{1}/{2}'.format(HTTP_ADDRESS, ARCHSUFFIXES[arch], package_name)
+    if ForceDownload or not os.path.exists(package_name):
+        url = '{0}/{1}/{2}'.format(HTTP_ADDRESS, ARCH_URL_SUFFIXES[arch], package_name)
         try:
             print('Trying to download {0} from {1} ...'.format(package_name, url))
             ur.urlretrieve(url, package_name)
@@ -102,6 +104,10 @@ for arch in [ARCH32Bit, ARCH64Bit]:
             print('   Failed to download {0} from {1}!'.format(package_name, url))
             print('   Detailed error message:')
             print('   {0}'.format(excpt))
+            exit(1)
+    else:
+        print("File {0} already exists, skipping download".format(package_name))
+
 
     # Extract mingw package
     package_dir_name = os.path.join(PACKAGE_BASE_DIR_NAME, arch)
@@ -109,8 +115,12 @@ for arch in [ARCH32Bit, ARCH64Bit]:
     create_fresh_directory(package_dir_name)
     create_fresh_directory(file_dir_name)
     print ('Extracting package {0}'.format(package_name))
-    with tf.open(package_name) as f:
-        f.extractall(package_dir_name)
+    with open(package_name, "rb") as f:
+        dctx = zstd.ZstdDecompressor()
+        with dctx.stream_reader(f) as reader:
+            with tf.open(fileobj=reader, mode="r|") as tar_content:
+                tar_content.extractall(path=package_dir_name)
+
     print('   Success!')
 
     # Collect the files we need in Inkscape
